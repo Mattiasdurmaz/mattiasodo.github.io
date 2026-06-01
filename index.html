@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mattias Odo — Datateknik & Inbyggda System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #e8ddd0;
+    --bg2: #f0e8dc;
+    --text: #2c2118;
+    --muted: #7a6a58;
+    --border: rgba(100,70,40,0.15);
+    --accent: #2c2118;
+    --tag-bg: #ddd0c0;
+    --tag-text: #4a3828;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(232,221,208,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 0.5px solid var(--border);
+    z-index: 100;
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .lang-toggle {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: none;
+    border: 0.5px solid var(--border);
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-toggle:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* HERO SECTION */
+  .hero-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 2rem 60px;
+    text-align: center;
+  }
+  
+  .hero {
+    max-width: 720px;
+    width: 100%;
+  }
+  
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 1px;
+    background: #7f9742; color: #ffffff;
+    border: 0.5px solid #677a35;
+    border-radius: 2px; padding: 5px 12px;
+    margin-bottom: 28px;
+    animation: slideInLeft 0.8s ease-out 0.2s both;
+  }
+  
+  .status-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ffffff;
+    animation: pulse 2s infinite;
+  }
+
+  .hero-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(52px, 10vw, 84px);
+    font-weight: 400;
+    letter-spacing: -2px;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    animation: slideInLeft 0.9s ease-out 0.4s both;
+  }
+
+  .hero-role {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 32px;
+    animation: slideInLeft 1s ease-out 0.6s both;
+  }
+
+  .hero-bio {
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--muted);
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 40px;
+    animation: slideInLeft 1.1s ease-out 0.8s both;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: slideInLeft 1.2s ease-out 1s both;
+  }
+
+  .hero-link {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    border-bottom: 0.5px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .hero-link:hover { color: var(--text); border-color: var(--text); }
+
+  /* LAYOUT */
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 2rem 80px;
+  }
+
+  section {
+    margin-bottom: 80px;
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  section.scroll-visible {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  section:nth-child(1) { animation-delay: 0s; }
+  section:nth-child(2) { animation-delay: 0.1s; }
+  section:nth-child(3) { animation-delay: 0.2s; }
+  section:nth-child(4) { animation-delay: 0.3s; }
+  section:nth-child(5) { animation-delay: 0.4s; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+
+
+  /* EXPERIENCE */
+  .exp-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .exp-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .exp-date { font-size: 11px; color: var(--muted); letter-spacing: 1px; line-height: 1.6; padding-top: 2px; }
+  .exp-title { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+  .exp-company { font-size: 12px; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.5px; }
+  .exp-desc { font-size: 12px; color: var(--muted); line-height: 1.8; }
+
+  /* EDUCATION */
+  .edu-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  /* SKILLS */
+  .skills-group { margin-bottom: 28px; }
+  .skills-group-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    border-radius: 2px;
+  }
+
+  /* LANGUAGES */
+  .lang-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 12px; }
+  .lang-item {
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    background: var(--bg2);
+  }
+  .lang-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .lang-level { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); }
+
+  /* CONTACT */
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 12px; }
+  .contact-item {
+    border: 0.5px solid var(--border);
+    border-radius: 4px;
+    padding: 14px 16px;
+    background: var(--bg2);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+  .contact-item:hover { border-color: var(--text); }
+  .contact-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .contact-value { font-size: 13px; }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 28px 2rem;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 560px) {
+    .exp-item, .edu-item { grid-template-columns: 1fr; gap: 6px; }
+    .exp-date { font-size: 10px; }
+    nav { padding: 0 1rem; }
+    .nav-links { gap: 1.2rem; font-size: 10px; }
+    main { padding: 0 1.2rem 60px; }
+    .hero-container { padding: 80px 1.2rem 60px; }
+    .hero-name { font-size: clamp(42px, 9vw, 64px); }
+    .hero-bio { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">M.Odo</a>
+  <ul class="nav-links">
+    <li><a href="#erfarenhet" data-sv="Erfarenhet" data-en="Experience">Erfarenhet</a></li>
+    <li><a href="#kompetenser" data-sv="Kompetenser" data-en="Skills">Kompetenser</a></li>
+    <li><a href="#kontakt" data-sv="Kontakt" data-en="Contact">Kontakt</a></li>
+    <li><button class="lang-toggle" id="langToggle" onclick="toggleLanguage()">EN / SV</button></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero-container">
+    <section class="hero">
+      <div class="status-badge">
+        <span class="status-dot"></span>
+        <span data-sv="Söker junior roll inom mjukvara / inbyggda system" data-en="Seeking junior role in software / embedded systems">Söker junior roll inom mjukvara / inbyggda system</span>
+      </div>
+      <h1 class="hero-name">Mattias Odo</h1>
+      <p class="hero-role" data-sv="Datateknik · Inbyggda System · Jönköping University" data-en="Computer Engineering · Embedded Systems · Jönköping University">Datateknik · Inbyggda System · Jönköping University</p>
+      <p class="hero-bio" data-sv="Ingenjörsstudent med passion för teknik och hur mjukvara och hårdvara samverkar. Praktisk erfarenhet från SAAB inom simulatorutveckling, samt från kundnära roller som stärkt min kommunikations- och problemlösningsförmåga. Snabb att lära, tar egna initiativ och trivs i tempo och samarbete." data-en="Engineering student passionate about technology and how software and hardware interact. Practical experience from SAAB in simulator development, as well as customer-facing roles that have strengthened my communication and problem-solving skills. Quick learner, self-motivated and thrive in a fast-paced collaborative environment.">Ingenjörsstudent med passion för teknik och hur mjukvara och hårdvara samverkar. Praktisk erfarenhet från SAAB inom simulatorutveckling, samt från kundnära roller som stärkt min kommunikations- och problemlösningsförmåga. Snabb att lära, tar egna initiativ och trivs i tempo och samarbete.</p>
+      <div class="hero-links">
+        <a class="hero-link" href="mailto:odo194@gmail.com">odo194@gmail.com</a>
+        <a class="hero-link" href="https://www.linkedin.com/in/mattias-odo-682b3b57" target="_blank">LinkedIn</a>
+        <a class="hero-link" href="https://github.com/Mattiasdurmaz" target="_blank">GitHub</a>
+        <a class="hero-link" href="tel:0729186284">0729-18 62 84</a>
+      </div>
+    </section>
+  </section>
+
+  <!-- ERFARENHET -->
+  <section id="erfarenhet">
+    <p class="section-label" data-sv="Arbetslivserfarenhet" data-en="Work Experience">Arbetslivserfarenhet</p>
+
+    <div class="exp-item">
+      <div class="exp-date">Juli 2024 — Nu</div>
+      <div>
+        <div class="exp-title" data-sv="Säljare / Teknisk rådgivare" data-en="Sales & Technical Advisor">Säljare / Teknisk rådgivare</div>
+        <div class="exp-company">Kjell & Company, Jönköping</div>
+        <div class="exp-desc" data-sv="Analyserar kundbehov och omsätter dem till tekniska lösningar inom konsumentelektronik, nätverk och smarta hemsystem. Ansvarade under sommaren för butikens dagliga drift självständigt. Stärkt problemlösnings- och kommunikationsförmåga." data-en="Analyze customer needs and translate them into technical solutions in consumer electronics, networking and smart home systems. Managed store operations independently during summer. Strengthened problem-solving and communication skills.">Analyserar kundbehov och omsätter dem till tekniska lösningar inom konsumentelektronik, nätverk och smarta hemsystem. Ansvarade under sommaren för butikens dagliga drift självständigt. Stärkt problemlösnings- och kommunikationsförmåga.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">Apr — Maj 2024</div>
+      <div>
+        <div class="exp-title" data-sv="System & Simulatorutveckling (praktik)" data-en="Systems & Simulator Development (Internship)">System & Simulatorutveckling (praktik)</div>
+        <div class="exp-company">SAAB, Jönköping</div>
+        <div class="exp-desc" data-sv="Arbetade inom simulatorverksamhet med systemförståelse, mjukvaruintegration och testning. Utvecklade mjukvara som möjliggjorde simulering av ett vapensystem direkt via dator — tester utan fysisk hårdvara. Tekniskt avancerad miljö med höga krav på tillförlitlighet." data-en="Worked in simulator development with systems understanding, software integration and testing. Developed software enabling weapon system simulation directly via computer — testing without physical hardware. Advanced technical environment with high reliability standards.">Arbetade inom simulatorverksamhet med systemförståelse, mjukvaruintegration och testning. Utvecklade mjukvara som möjliggjorde simulering av ett vapensystem direkt via dator — tester utan fysisk hårdvara. Tekniskt avancerad miljö med höga krav på tillförlitlighet.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">Nov 2022 — Feb 2024</div>
+      <div>
+        <div class="exp-title" data-sv="Butikssäljare & Mobilteknik" data-en="Retail Sales & Mobile Technology">Butikssäljare & Mobilteknik</div>
+        <div class="exp-company">Teknikmagasinet, Jönköping</div>
+        <div class="exp-desc" data-sv="Kundservice, produktrådgivning och reparation av mobiltelefoner — diagnostisering av hårdvara och mjukvara. Krävde kontinuerlig uppdatering inom ny teknik och reparationsteknik." data-en="Customer service, product advice and mobile phone repair — hardware and software diagnostics. Required continuous updates on new technology and repair techniques.">Kundservice, produktrådgivning och reparation av mobiltelefoner — diagnostisering av hårdvara och mjukvara. Krävde kontinuerlig uppdatering inom ny teknik och reparationsteknik.</div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-date">Nov 2021 — Juli 2023</div>
+      <div>
+        <div class="exp-title" data-sv="Truckförare / Lagerarbetare" data-en="Truck Driver / Warehouse Worker">Truckförare / Lagerarbetare</div>
+        <div class="exp-company">PostNord TPL, Jönköping</div>
+        <div class="exp-desc" data-sv="Körde A1-truck och hanterade förplocken under strikta tidsfrister. Uppfyllde och överträffade ackordskrav genom effektiv prioritering och anpassning." data-en="Drove A1 truck and handled picking under strict deadlines. Met and exceeded piecework targets through efficient prioritization and adaptation.">Körde A1-truck och hanterade förplocken under strikta tidsfrister. Uppfyllde och överträffade ackordskrav genom effektiv prioritering och anpassning.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UTBILDNING -->
+  <section id="utbildning">
+    <p class="section-label" data-sv="Utbildning" data-en="Education">Utbildning</p>
+    <div class="edu-item">
+      <div class="exp-date">Aug 2021 — Maj 2026</div>
+      <div>
+        <div class="exp-title" data-sv="Bachelor of Science — Datateknik, inbyggda system (180 hp)" data-en="Bachelor of Science — Computer Engineering, Embedded Systems (180 credits)">Bachelor of Science — Datateknik, inbyggda system (180 hp)</div>
+        <div class="exp-company">Jönköping University – JTH</div>
+        <div class="exp-desc" data-sv="Programmering i C, C++, Python, digitalteknik, datastrukturer och algoritmer, realtidssystem, operativsystem, kommunikation och nätverk. Fokus på hur mjukvara och hårdvara samverkar." data-en="Programming in C, C++, Python, digital electronics, data structures and algorithms, real-time systems, operating systems, communication and networking. Focus on how software and hardware interact.">Programmering i C, C++, Python, digitalteknik, datastrukturer och algoritmer, realtidssystem, operativsystem, kommunikation och nätverk. Fokus på hur mjukvara och hårdvara samverkar.</div>
+      </div>
+    </div>
+
+    <div class="edu-item">
+      <div class="exp-date">Aug 2017 — Juni 2020</div>
+      <div>
+        <div class="exp-title" data-sv="Gymnasieexamen — Teknikprogrammet" data-en="High School Diploma — Technology Program">Gymnasieexamen — Teknikprogrammet</div>
+        <div class="exp-company" data-sv="Tycho Brahe skolan, Helsingborg" data-en="Tycho Brahe School, Helsingborg">Tycho Brahe skolan, Helsingborg</div>
+        <div class="exp-desc" data-sv="Specialisering: Informations- och medieteknik. Grund inom programmering, elektronik och digitala system." data-en="Specialization: Information and Media Technology. Foundation in programming, electronics and digital systems.">Specialisering: Informations- och medieteknik. Grund inom programmering, elektronik och digitala system.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KOMPETENSER -->
+  <section id="kompetenser">
+    <p class="section-label" data-sv="Kompetenser" data-en="Skills">Kompetenser</p>
+
+    <div class="skills-group">
+      <div class="skills-group-title" data-sv="Programmering" data-en="Programming">Programmering</div>
+      <div class="tags">
+        <span class="tag">C</span>
+        <span class="tag">C++</span>
+        <span class="tag">C#</span>
+        <span class="tag">Python</span>
+        <span class="tag">Kotlin</span>
+        <span class="tag">Android</span>
+        <span class="tag">Java</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">VHDL</span>
+        <span class="tag">HTML/CSS</span>
+      </div>
+    </div>
+
+    <div class="skills-group">
+      <div class="skills-group-title" data-sv="Teknik & System" data-en="Technology & Systems">Teknik & System</div>
+      <div class="tags">
+        <span class="tag">Inbyggda System</span>
+        <span class="tag">Realtidssystem</span>
+        <span class="tag">Elektronik</span>
+        <span class="tag">Digitalteknik</span>
+        <span class="tag">Operativsystem</span>
+        <span class="tag">Nätverk</span>
+        <span class="tag">Datastrukturer</span>
+        <span class="tag">Testning</span>
+      </div>
+    </div>
+
+    <div class="skills-group">
+      <div class="skills-group-title" data-sv="Verktyg" data-en="Tools">Verktyg</div>
+      <div class="tags">
+        <span class="tag">Git</span>
+        <span class="tag">Visual Studio</span>
+        <span class="tag">Versionshantering</span>
+        <span class="tag">VSCode</span>
+        <span class="tag">.NET</span>
+        <span class="tag">Jetpack Compose</span>
+        <span class="tag">Unity</span>
+        <span class="tag">Microsoft Office</span>
+        <span class="tag">Flutter</span>
+      </div>
+    </div>
+
+    <div class="skills-group">
+      <div class="skills-group-title" data-sv="Övrigt" data-en="Other">Övrigt</div>
+      <div class="tags">
+        <span class="tag">Truckkörkort A1</span>
+        <span class="tag">Kundservice</span>
+        <span class="tag">Problemlösning</span>
+        <span class="tag">Flerspråkig</span>
+      </div>
+    </div>
+
+    <br>
+    <div class="skills-group-title" data-sv="Språk" data-en="Languages">Språk</div>
+    <div class="lang-grid">
+      <div class="lang-item"><div class="lang-name" data-sv="Svenska" data-en="Swedish">Svenska</div><div class="lang-level" data-sv="Modersmål" data-en="Native">Modersmål</div></div>
+      <div class="lang-item"><div class="lang-name" data-sv="Engelska" data-en="English">Engelska</div><div class="lang-level" data-sv="Flytande" data-en="Fluent">Flytande</div></div>
+      <div class="lang-item"><div class="lang-name" data-sv="Assyriska" data-en="Assyrian">Assyriska</div><div class="lang-level" data-sv="Modersmål" data-en="Native">Modersmål</div></div>
+      <div class="lang-item"><div class="lang-name" data-sv="Arabiska" data-en="Arabic">Arabiska</div><div class="lang-level" data-sv="Grundläggande" data-en="Basic">Grundläggande</div></div>
+      <div class="lang-item"><div class="lang-name" data-sv="Tyska" data-en="German">Tyska</div><div class="lang-level" data-sv="Grundläggande" data-en="Basic">Grundläggande</div></div>
+    </div>
+  </section>
+
+  <!-- KONTAKT -->
+  <section id="kontakt">
+    <p class="section-label" data-sv="Kontakt" data-en="Contact">Kontakt</p>
+    <div class="contact-grid">
+      <a class="contact-item" href="mailto:odo194@gmail.com">
+        <div class="contact-label" data-sv="E-post" data-en="Email">E-post</div>
+        <div class="contact-value">odo194@gmail.com</div>
+      </a>
+      <a class="contact-item" href="tel:0729186284">
+        <div class="contact-label" data-sv="Telefon" data-en="Phone">Telefon</div>
+        <div class="contact-value">0729-18 62 84</div>
+      </a>
+      <a class="contact-item" href="https://www.linkedin.com/in/mattias-odo-682b3b57" target="_blank">
+        <div class="contact-label" data-sv="LinkedIn" data-en="LinkedIn">LinkedIn</div>
+        <div class="contact-value">mattias-odo-682b3b57</div>
+      </a>
+      <a class="contact-item" href="https://github.com/Mattiasdurmaz" target="_blank">
+        <div class="contact-label" data-sv="GitHub" data-en="GitHub">GitHub</div>
+        <div class="contact-value">Mattiasdurmaz</div>
+      </a>
+      <div class="contact-item">
+        <div class="contact-label" data-sv="Ort" data-en="Location">Ort</div>
+        <div class="contact-value" data-sv="Jönköping, Sverige" data-en="Jönköping, Sweden">Jönköping, Sverige</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span data-sv="© 2026 Mattias Odo · Jönköping University · Datateknik" data-en="© 2026 Mattias Odo · Jönköping University · Computer Engineering">© 2026 Mattias Odo · Jönköping University · Datateknik</span>
+</footer>
+
+<script>
+let currentLang = 'sv';
+
+function toggleLanguage() {
+  currentLang = currentLang === 'sv' ? 'en' : 'sv';
+  localStorage.setItem('language', currentLang);
+  updateLanguage();
+}
+
+function updateLanguage() {
+  const elements = document.querySelectorAll('[data-sv][data-en]');
+  elements.forEach(el => {
+    if (currentLang === 'sv') {
+      el.textContent = el.getAttribute('data-sv');
+    } else {
+      el.textContent = el.getAttribute('data-en');
+    }
+  });
+  document.documentElement.lang = currentLang;
+}
+
+// Load saved language preference
+const savedLang = localStorage.getItem('language');
+if (savedLang) {
+  currentLang = savedLang;
+  updateLanguage();
+}
+
+// Scroll-triggered animations
+const observerOptions = {
+  threshold: 0.1,
+  rootMargin: '0px 0px -100px 0px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('scroll-visible');
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('main > section').forEach(section => {
+  observer.observe(section);
+});
+</script>
+
+</body>
+</html>
